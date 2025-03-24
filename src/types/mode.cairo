@@ -1,10 +1,13 @@
-// Internal imports
-use rpg::elements::modes;
-use rpg::types::monster::Monster;
-use rpg::types::role::Role;
+use core::traits::Into;
+use core::debug::PrintTrait;
+
+// Using direct imports for this module
+use super::monster::Monster;
+use super::role::Role;
+use crate::elements::modes;
 
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
-enum Mode {
+pub enum Mode {
     None,
     Easy,
     Medium,
@@ -34,7 +37,7 @@ impl ModeImpl of ModeTrait {
     }
 }
 
-impl IntoModeFelt252 of core::Into<Mode, felt252> {
+impl IntoModeFelt252 of Into<Mode, felt252> {
     #[inline(always)]
     fn into(self: Mode) -> felt252 {
         match self {
@@ -46,7 +49,7 @@ impl IntoModeFelt252 of core::Into<Mode, felt252> {
     }
 }
 
-impl IntoModeU8 of core::Into<Mode, u8> {
+impl IntoModeU8 of Into<Mode, u8> {
     #[inline(always)]
     fn into(self: Mode) -> u8 {
         match self {
@@ -58,7 +61,7 @@ impl IntoModeU8 of core::Into<Mode, u8> {
     }
 }
 
-impl IntoU8Mode of core::Into<u8, Mode> {
+impl IntoU8Mode of Into<u8, Mode> {
     #[inline(always)]
     fn into(self: u8) -> Mode {
         let card: felt252 = self.into();
@@ -72,7 +75,7 @@ impl IntoU8Mode of core::Into<u8, Mode> {
     }
 }
 
-impl ModePrint of core::debug::PrintTrait<Mode> {
+impl ModePrint of PrintTrait<Mode> {
     #[inline(always)]
     fn print(self: Mode) {
         let felt: felt252 = self.into();

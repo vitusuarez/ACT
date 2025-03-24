@@ -1,9 +1,7 @@
-// Core imports
 use core::poseidon::{PoseidonTrait, HashState};
 use core::hash::HashStateTrait;
 
-// Internal imports
-use rpg::constants::{SEED_WEEK_SECONDS, SEED_OFFSET_SECONDS};
+use crate::constants::{SEED_WEEK_SECONDS, SEED_OFFSET_SECONDS};
 
 #[generate_trait]
 impl Seeder of SeederTrait {

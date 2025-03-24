@@ -1,26 +1,25 @@
-// Core imports
 use core::debug::PrintTrait;
+use core::traits::Into;
 
-// Internal imports
-use rpg::constants::{
+use crate::constants::{
     DEFAULT_POTION_HEAL, MAX_PLAYER_HEALTH, DEFAULT_POTION_COST, DEFAULT_PLAYER_DAMAGE,
     DEFAULT_PLAYER_HEALTH, DEFAULT_PLAYER_GOLD
 };
-use rpg::models::index::Player;
-use rpg::types::role::{Role, RoleTrait};
-use rpg::types::direction::Direction;
-use rpg::types::mode::{Mode, ModeTrait};
-use rpg::types::monster::{Monster, MonsterTrait};
-use rpg::helpers::seeder::Seeder;
+use crate::models::index::Player;
+use crate::types::role::{Role, RoleTrait};
+use crate::types::direction::Direction;
+use crate::types::mode::{Mode, ModeTrait};
+use crate::types::monster::{Monster, MonsterTrait};
+use crate::helpers::seeder::Seeder;
 
 mod errors {
-    const PLAYER_NOT_EXIST: felt252 = 'Player: does not exist';
-    const PLAYER_ALREADY_EXIST: felt252 = 'Player: already exist';
-    const PLAYER_INVALID_NAME: felt252 = 'Player: invalid name';
-    const PLAYER_INVALID_CLASS: felt252 = 'Player: invalid role';
-    const PLAYER_INVALID_DIRECTION: felt252 = 'Player: invalid direction';
-    const PLAYER_NOT_ENOUGH_GOLD: felt252 = 'Player: not enough gold';
-    const PLAYER_IS_DEAD: felt252 = 'Player: is dead';
+    pub const PLAYER_NOT_EXIST: felt252 = 'Player: does not exist';
+    pub const PLAYER_ALREADY_EXIST: felt252 = 'Player: already exist';
+    pub const PLAYER_INVALID_NAME: felt252 = 'Player: invalid name';
+    pub const PLAYER_INVALID_CLASS: felt252 = 'Player: invalid role';
+    pub const PLAYER_INVALID_DIRECTION: felt252 = 'Player: invalid direction';
+    pub const PLAYER_NOT_ENOUGH_GOLD: felt252 = 'Player: not enough gold';
+    pub const PLAYER_IS_DEAD: felt252 = 'Player: is dead';
 }
 
 #[generate_trait]

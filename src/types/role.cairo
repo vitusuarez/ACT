@@ -1,8 +1,9 @@
-// Internal imports
-use rpg::elements::roles;
+use core::traits::Into;
+use core::debug::PrintTrait;
+use crate::elements::roles;
 
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
-enum Role {
+pub enum Role {
     None,
     Fire,
     Water,
@@ -47,7 +48,7 @@ impl RoleImpl of RoleTrait {
     }
 }
 
-impl IntoRoleFelt252 of core::Into<Role, felt252> {
+impl IntoRoleFelt252 of Into<Role, felt252> {
     #[inline(always)]
     fn into(self: Role) -> felt252 {
         match self {
@@ -60,7 +61,7 @@ impl IntoRoleFelt252 of core::Into<Role, felt252> {
     }
 }
 
-impl IntoRoleU8 of core::Into<Role, u8> {
+impl IntoRoleU8 of Into<Role, u8> {
     #[inline(always)]
     fn into(self: Role) -> u8 {
         match self {
@@ -73,7 +74,7 @@ impl IntoRoleU8 of core::Into<Role, u8> {
     }
 }
 
-impl IntoU8Role of core::Into<u8, Role> {
+impl IntoU8Role of Into<u8, Role> {
     #[inline(always)]
     fn into(self: u8) -> Role {
         let card: felt252 = self.into();
@@ -88,7 +89,7 @@ impl IntoU8Role of core::Into<u8, Role> {
     }
 }
 
-impl RolePrint of core::debug::PrintTrait<Role> {
+impl RolePrint of PrintTrait<Role> {
     #[inline(always)]
     fn print(self: Role) {
         let felt: felt252 = self.into();

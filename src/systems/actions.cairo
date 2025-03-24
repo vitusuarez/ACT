@@ -1,8 +1,5 @@
-// Starknet imports
 use starknet::ContractAddress;
 use starknet::info::{get_caller_address, get_block_timestamp};
-
-// Dojo imports
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Interfaces
@@ -22,62 +19,67 @@ mod actions {
     
     // Dojo imports
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    use dojo::model::ModelStorage;
+    use dojo::event::EventStorage;
     
     // Internal imports
-    use rpg::types::mode::Mode;
-    use rpg::types::role::Role;
-    use rpg::types::monster::Monster;
-    use rpg::types::direction::Direction;
-    use rpg::models::player::{Player, PlayerTrait, PlayerAssert};
-    use rpg::models::dungeon::{Dungeon, DungeonTrait, DungeonAssert};
+    use crate::types::mode::Mode;
+    use crate::types::role::Role;
+    use crate::types::monster::Monster;
+    use crate::types::direction::Direction;
+    use crate::models::player::{Player, PlayerTrait, PlayerAssert};
+    use crate::models::dungeon::{Dungeon, DungeonTrait, DungeonAssert};
     
     // Local imports
     use super::IActions;
     
-    // Events
-    #[derive(Drop, starknet::Event)]
-    struct PlayerSpawned {
+    // Dojo events
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    struct Moved {
+        #[key]
+        player: ContractAddress,
+        direction: u8
+    }
+    
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    struct Attacked {
+        #[key]
+        player: ContractAddress,
+        monster_health: u8
+    }
+    
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    struct Healed {
+        #[key]
+        player: ContractAddress,
+        quantity: u8
+    }
+    
+    #[derive(Copy, Drop, Serde)]
+    #[dojo::event]
+    struct Spawned {
         #[key]
         player: ContractAddress,
         name: felt252,
         role: u8
     }
     
-    #[derive(Drop, starknet::Event)]
-    struct PlayerMoved {
-        #[key]
-        player: ContractAddress,
-        direction: u8
-    }
-    
-    #[derive(Drop, starknet::Event)]
-    struct PlayerAttacked {
-        #[key]
-        player: ContractAddress,
-        monster_health: u8
-    }
-    
-    #[derive(Drop, starknet::Event)]
-    struct PlayerHealed {
-        #[key]
-        player: ContractAddress,
-        quantity: u8
-    }
-    
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        PlayerSpawned: PlayerSpawned,
-        PlayerMoved: PlayerMoved,
-        PlayerAttacked: PlayerAttacked,
-        PlayerHealed: PlayerHealed
+    // Helper trait for world namespace access
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        fn world_namespace(self: @ContractState) -> dojo::world::WorldStorage {
+            self.world(@"rpg")
+        }
     }
     
     // Implementations
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
         fn spawn(self: @ContractState, name: felt252, role: u8) {
-            let world = self.world(@"rpg");
+            let mut world = self.world_namespace();
             let player_address = get_caller_address();
             let player_id: felt252 = player_address.into();
             let time: u64 = get_block_timestamp();
@@ -87,20 +89,20 @@ mod actions {
             player.enrole(role.into());
             
             // Create initial dungeon (empty)
-            let dungeon = DungeonTrait::new(player_id, Monster::None, Role::None);
+            let mut dungeon = DungeonTrait::new(player_id, Monster::None, Role::None);
             
             // Write to world
             world.write_model(@player);
             world.write_model(@dungeon);
             
-            // Emit event
+            // Emit Dojo event
             world.emit_event(
-                PlayerSpawned { player: player_address, name: name, role: role }
+                @Spawned { player: player_address, name: name, role: role }
             );
         }
 
         fn move(self: @ContractState, direction: u8) {
-            let world = self.world(@"rpg");
+            let mut world = self.world_namespace();
             let player_address = get_caller_address();
             let player_id: felt252 = player_address.into();
             
@@ -116,20 +118,20 @@ mod actions {
             
             // Move player
             let (monster, role) = player.move(direction.into());
-            let new_dungeon: Dungeon = DungeonTrait::new(player_id, monster, role);
+            let mut new_dungeon: Dungeon = DungeonTrait::new(player_id, monster, role);
             
             // Update state
             world.write_model(@player);
             world.write_model(@new_dungeon);
             
-            // Emit event
+            // Emit Dojo event
             world.emit_event(
-                PlayerMoved { player: player_address, direction: direction }
+                @Moved { player: player_address, direction: direction }
             );
         }
 
         fn attack(self: @ContractState) {
-            let world = self.world(@"rpg");
+            let mut world = self.world_namespace();
             let player_address = get_caller_address();
             let player_id: felt252 = player_address.into();
             
@@ -157,14 +159,14 @@ mod actions {
             world.write_model(@player);
             world.write_model(@dungeon);
             
-            // Emit event
+            // Emit Dojo event
             world.emit_event(
-                PlayerAttacked { player: player_address, monster_health: dungeon.health }
+                @Attacked { player: player_address, monster_health: dungeon.health }
             );
         }
 
         fn heal(self: @ContractState, quantity: u8) {
-            let world = self.world(@"rpg");
+            let mut world = self.world_namespace();
             let player_address = get_caller_address();
             let player_id: felt252 = player_address.into();
             
@@ -184,9 +186,9 @@ mod actions {
             // Update state
             world.write_model(@player);
             
-            // Emit event
+            // Emit Dojo event
             world.emit_event(
-                PlayerHealed { player: player_address, quantity: quantity }
+                @Healed { player: player_address, quantity: quantity }
             );
         }
     }

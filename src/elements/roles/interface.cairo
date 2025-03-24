@@ -1,7 +1,6 @@
-// Internal imports
-use rpg::types::role::Role;
+use crate::types::role::Role;
 
-trait RoleTrait {
+pub trait RoleTrait {
     fn weakness(role: Role) -> Role;
     fn strength(role: Role) -> Role;
 }

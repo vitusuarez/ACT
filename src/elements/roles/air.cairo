@@ -1,5 +1,5 @@
-// Internal imports
-use rpg::elements::roles::interface::{Role, RoleTrait};
+use crate::types::role::Role;
+use crate::elements::roles::interface::RoleTrait;
 
 impl Air of RoleTrait {
     #[inline]

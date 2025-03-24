@@ -1,5 +1,4 @@
-// Internal imports
-use rpg::elements::monsters::interface::MonsterTrait;
+use crate::elements::monsters::interface::MonsterTrait;
 
 // Constants
 const DAMAGE: u8 = 10;

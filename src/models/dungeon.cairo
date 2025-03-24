@@ -1,19 +1,16 @@
-// Core imports
 use core::debug::PrintTrait;
-use core::poseidon::{PoseidonTrait, HashState};
-use core::hash::HashStateTrait;
+use core::traits::Into;
+use core::array::ArrayTrait;
 
-// Internal imports
-use rpg::constants;
-use rpg::models::index::Dungeon;
-use rpg::types::mode::{Mode, ModeTrait};
-use rpg::types::role::{Role, RoleTrait};
-use rpg::types::monster::{Monster, MonsterTrait};
+use crate::models::index::Dungeon;
+use crate::types::mode::{Mode, ModeTrait};
+use crate::types::role::{Role, RoleTrait};
+use crate::types::monster::{Monster, MonsterTrait};
 
 mod errors {
-    const DUNGEON_NOT_DONE: felt252 = 'Dungeon: not done';
-    const DUNGEON_ALREADY_DONE: felt252 = 'Dungeon: already done';
-    const DUNGEON_NOT_SHOP: felt252 = 'Dungeon: not shop';
+    pub const DUNGEON_NOT_DONE: felt252 = 'Dungeon: not done';
+    pub const DUNGEON_ALREADY_DONE: felt252 = 'Dungeon: already done';
+    pub const DUNGEON_NOT_SHOP: felt252 = 'Dungeon: not shop';
 }
 
 #[generate_trait]

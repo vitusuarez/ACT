@@ -1,8 +1,9 @@
-// Internal imports
-use rpg::elements::monsters;
+use core::traits::Into;
+use core::debug::PrintTrait;
+use crate::elements::monsters;
 
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
-enum Monster {
+pub enum Monster {
     None,
     Common,
     Elite,
@@ -42,7 +43,7 @@ impl MonsterImpl of MonsterTrait {
     }
 }
 
-impl IntoMonsterFelt252 of core::Into<Monster, felt252> {
+impl IntoMonsterFelt252 of Into<Monster, felt252> {
     #[inline]
     fn into(self: Monster) -> felt252 {
         match self {
@@ -54,7 +55,7 @@ impl IntoMonsterFelt252 of core::Into<Monster, felt252> {
     }
 }
 
-impl IntoMonsterU8 of core::Into<Monster, u8> {
+impl IntoMonsterU8 of Into<Monster, u8> {
     #[inline]
     fn into(self: Monster) -> u8 {
         match self {
@@ -66,7 +67,7 @@ impl IntoMonsterU8 of core::Into<Monster, u8> {
     }
 }
 
-impl IntoU8Monster of core::Into<u8, Monster> {
+impl IntoU8Monster of Into<u8, Monster> {
     #[inline]
     fn into(self: u8) -> Monster {
         let card: felt252 = self.into();
@@ -80,7 +81,7 @@ impl IntoU8Monster of core::Into<u8, Monster> {
     }
 }
 
-impl MonsterPrint of core::debug::PrintTrait<Monster> {
+impl MonsterPrint of PrintTrait<Monster> {
     #[inline]
     fn print(self: Monster) {
         let felt: felt252 = self.into();

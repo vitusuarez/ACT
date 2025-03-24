@@ -1,52 +1,59 @@
-mod constants;
-mod helpers {
-    mod seeder;
+// Make all modules public
+pub mod constants;
+pub mod helpers {
+    pub mod seeder;
 }
 
-mod types {
-    mod direction;
-    mod mode;
-    mod monster;
-    mod role;
+pub mod types {
+    pub mod direction;
+    pub mod mode;
+    pub mod monster;
+    pub mod role;
 }
 
-mod models {
-    mod index;
-    mod dungeon;
-    mod player;
+pub mod models {
+    pub mod index;
+    pub mod dungeon;
+    pub mod player;
 }
 
-mod systems {
-    mod actions;
+pub mod systems {
+    pub mod actions;
 }
 
-mod elements {
-    mod modes {
-        mod interface;
-        mod easy;
-        mod medium;
-        mod hard;
+pub mod elements {
+    pub mod modes {
+        pub mod interface;
+        pub mod easy;
+        pub mod medium;
+        pub mod hard;
     }
-    mod monsters {
-        mod interface;
-        mod common;
-        mod elite;
-        mod boss;
+    pub mod monsters {
+        pub mod interface;
+        pub mod common;
+        pub mod elite;
+        pub mod boss;
     }
-    mod roles {
-        mod interface;
-        mod fire;
-        mod water;
-        mod earth;
-        mod air;
+    pub mod roles {
+        pub mod interface;
+        pub mod fire;
+        pub mod water;
+        pub mod earth;
+        pub mod air;
     }
 }
 
 #[cfg(test)]
-mod tests {
-    mod setup;
-    mod test_setup;
-    mod test_move;
-    mod test_attack;
-    mod test_heal;
+pub mod tests {
+    pub mod setup;
+    pub mod test_setup;
+    pub mod test_move;
+    pub mod test_attack;
+    pub mod test_heal;
 }
+
+// Re-export key types for better visibility
+pub use types::direction::Direction;
+pub use types::mode::Mode;
+pub use types::monster::Monster;
+pub use types::role::Role;

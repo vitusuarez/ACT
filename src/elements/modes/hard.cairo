@@ -1,5 +1,6 @@
-// Internal imports
-use rpg::elements::modes::interface::{ModeTrait, Monster, Role, RoleTrait};
+use crate::types::monster::Monster;
+use crate::types::role::{Role, RoleTrait};
+use crate::elements::modes::interface::ModeTrait;
 
 impl Hard of ModeTrait {
     #[inline]

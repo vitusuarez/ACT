@@ -1,5 +1,8 @@
+use core::traits::Into;
+use core::debug::PrintTrait;
+
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
-enum Direction {
+pub enum Direction {
     None,
     Left,
     Right,
@@ -7,7 +10,7 @@ enum Direction {
     Down,
 }
 
-impl IntoDirectionFelt252 of core::Into<Direction, felt252> {
+impl IntoDirectionFelt252 of Into<Direction, felt252> {
     #[inline]
     fn into(self: Direction) -> felt252 {
         match self {
@@ -20,7 +23,7 @@ impl IntoDirectionFelt252 of core::Into<Direction, felt252> {
     }
 }
 
-impl IntoDirectionU8 of core::Into<Direction, u8> {
+impl IntoDirectionU8 of Into<Direction, u8> {
     #[inline]
     fn into(self: Direction) -> u8 {
         match self {
@@ -33,7 +36,7 @@ impl IntoDirectionU8 of core::Into<Direction, u8> {
     }
 }
 
-impl IntoU8Direction of core::Into<u8, Direction> {
+impl IntoU8Direction of Into<u8, Direction> {
     #[inline]
     fn into(self: u8) -> Direction {
         let card: felt252 = self.into();
@@ -48,7 +51,7 @@ impl IntoU8Direction of core::Into<u8, Direction> {
     }
 }
 
-impl DirectionPrint of core::debug::PrintTrait<Direction> {
+impl DirectionPrint of PrintTrait<Direction> {
     #[inline]
     fn print(self: Direction) {
         let felt: felt252 = self.into();

@@ -1,1 +1,1 @@
-mod seeder;
+pub mod seeder;
