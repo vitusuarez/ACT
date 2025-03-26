@@ -1,28 +1,26 @@
-// Core imports
-use core::debug::PrintTrait;
+#[cfg(test)]
+mod tests {
+    use core::debug::PrintTrait;
+    use starknet::testing::set_contract_address;
+    use dojo::model::{ModelStorage, ModelStorageTest};
+    use dojo::world::WorldStorageTrait;
 
-// Starknet imports
-use starknet::testing::{set_contract_address, set_transaction_hash};
+    use crate::models::dungeon::Dungeon;
+    use crate::types::direction::Direction;
+    use crate::systems::actions::IActionsDispatcherTrait;
+    use crate::tests::setup::tests as setup;
 
-// Dojo imports
-use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+    #[test]
+    fn test_actions_move() {
+        // [Setup]
+        let (world, systems, context) = setup::spawn_game();
+        let world_state = world.world_state();
 
-// Internal imports
-use rpg::models::player::{Player, PlayerTrait};
-use rpg::models::dungeon::{Dungeon, DungeonTrait};
-use rpg::types::direction::Direction;
-use rpg::systems::actions::IActionsDispatcherTrait;
-use rpg::tests::setup::{setup, setup::{Systems, PLAYER}};
+        // [Move]
+        systems.actions.move(Direction::Up.into());
 
-#[test]
-fn test_actions_move() {
-    // [Setup]
-    let (world, systems, context) = setup::spawn_game();
-
-    // [Move]
-    systems.actions.move(Direction::Up.into());
-
-    // [Assert]
-    let dungeon: Dungeon = world.read_model(context.player_id);
-    assert(dungeon.health > 0, 'Move: dungeon health');
+        // [Assert]
+        let dungeon: Dungeon = world_state.model_storage.read::<Dungeon>(context.player_id);
+        assert(dungeon.health > 0, 'Move: dungeon health');
+    }
 }
