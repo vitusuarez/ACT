@@ -1,73 +1,43 @@
 #[cfg(test)]
 mod tests {
-    use core::array::ArrayTrait;
-    use starknet::ContractAddress;
-    use starknet::testing::{set_contract_address, set_caller_address};
+    use starknet::{ContractAddress, contract_address_const};
+    use dojo::test_utils::{spawn_test_world, deploy_contract};
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-    use dojo::model::Model;
-    use dojo_cairo_test::{spawn_test_world, NamespaceDef, TestResource, ContractDef, ContractDefTrait};
 
-    use crate::models::index;
+    // Import actions system and interface directly
+    use crate::systems::actions::actions;
+    
+    // Re-export the interface from systems module
+    use crate::systems::actions::{IActionsDispatcher, IActionsDispatcherTrait};
+    
+    // Import model types
     use crate::types::role::Role;
-    use crate::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-
-    // Constants
-    fn PLAYER() -> ContractAddress {
-        starknet::contract_address_const::<'PLAYER'>()
+    use crate::types::direction::Direction;
+    use crate::models::index::{Player, Dungeon};
+    
+    // Test constants
+    pub fn PLAYER() -> ContractAddress {
+        contract_address_const::<0x1>()
     }
-
-    const PLAYER_NAME: felt252 = 'PLAYER';
-
-    #[derive(Drop)]
-    struct Systems {
-        actions: IActionsDispatcher,
-    }
-
-    #[derive(Drop)]
-    struct Context {
-        player_id: felt252,
-        player_name: felt252,
-    }
-
-    fn namespace_def() -> NamespaceDef {
-        NamespaceDef {
-            namespace: "rpg",
-            resources: [
-                TestResource::Model(crate::models::index::player::TEST_CLASS_HASH),
-                TestResource::Model(crate::models::index::dungeon::TEST_CLASS_HASH),
-                TestResource::Contract(actions::TEST_CLASS_HASH),
-            ].span()
-        }
-    }
-
-    fn contract_defs() -> Span<ContractDef> {
-        [
-            ContractDefTrait::new(@"rpg", @"actions")
-                .with_writer_of([dojo::utils::bytearray_hash(@"rpg")].span())
-        ].span()
-    }
-
-    fn spawn_game() -> (IWorldDispatcher, Systems, Context) {
-        // [Setup] World
-        let ndef = namespace_def();
-        let world = spawn_test_world([ndef].span());
+    pub const PLAYER_NAME: felt252 = 'PLAYER';
+    
+    /// Helper to set up a test world and deploy the actions contract
+    pub fn spawn_game() -> (IWorldDispatcher, IActionsDispatcher, ContractAddress) {
+        // Create test world
+        let world = spawn_test_world();
         
-        // Sync permissions and initializations
-        let world_mut = WorldStorageTest::world_mut(world);
-        world_mut.sync_perms_and_inits(contract_defs());
-
-        // [Setup] Systems
-        let contract_address = world_mut.dns(@"actions").unwrap().0;
-        let systems = Systems {
-            actions: IActionsDispatcher { contract_address },
-        };
+        // Deploy actions contract
+        let contract_address = deploy_contract(world, actions::TEST_CLASS_HASH, array![]);
+        let actions = IActionsDispatcher { contract_address };
         
-        // [Setup] Context
-        set_contract_address(PLAYER());
-        systems.actions.spawn(PLAYER_NAME, Role::Water.into());
-        let context = Context { player_id: PLAYER().into(), player_name: PLAYER_NAME };
-
-        // [Return]
-        (world, systems, context)
+        // Set caller as player
+        starknet::testing::set_contract_address(PLAYER());
+        starknet::testing::set_caller_address(PLAYER());
+        
+        // Spawn player
+        actions.spawn(PLAYER_NAME, Role::Water);
+        
+        // Return world, actions dispatcher, and player address
+        (world, actions, PLAYER())
     }
 }

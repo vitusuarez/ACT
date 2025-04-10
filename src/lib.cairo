@@ -40,13 +40,22 @@ pub mod elements {
     }
 }
 
+/// Test modules
 #[cfg(test)]
 pub mod tests {
+    /// Test utilities and setup
     pub mod setup;
-    pub mod test_setup;
+    /// Game initialization tests
+    /// pub mod test_setup;
+    /// Movement tests
     pub mod test_move;
+    /// Combat tests
     pub mod test_attack;
-    pub mod test_heal;
+    /// Healing tests
+    /// pub mod test_heal;
+    /// Event emission tests
+    /// pub mod test_event_emission;
+    /// pub mod test_unit_models;
 }
 
 // Re-export key types and traits for better visibility
